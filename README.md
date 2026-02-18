@@ -13,4 +13,4 @@ Sering ada update bot gratis sama info website keren, gas klik:
 
 
 
-## © Rerezz Official
+## © 2026 | Rerezz Official
