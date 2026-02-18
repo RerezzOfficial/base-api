@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs API | Rerezz Official</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0061ff;
+            --sidebar-w: 280px;
+            --bg: #f4f7fe;
+            --card: #ffffff;
+            --text: #1b2559;
+            --text-light: #a3aed0;
+            --border: #e9edf7;
+            --header-bg: #ffffff;
+            --radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0b1437;
+            --card: #111c44;
+            --text: #ffffff;
+            --text-light: #a3aed0;
+            --border: #1b254b;
+            --header-bg: #111c44;
+            --shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background 0.3s;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar {
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--card);
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 30px 20px;
+            border-right: 1px solid var(--border);
+            z-index: 1000;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 12px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 25px 0;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-w);
+            right: 0;
+            background: var(--header-bg);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 900;
+            transition: 0.3s;
+        }
+
+        header.scrolled {
+            top: 0;
+            left: calc(var(--sidebar-w) + 20px);
+            right: 20px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            border-top: none;
+        }
+
+        .main {
+            margin-left: var(--sidebar-w);
+            padding: 120px 40px 40px;
+            min-height: 100vh;
+        }
+
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            margin-bottom: 15px;
+            object-fit: cover;
+            background: var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .card-api {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 35px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 18px;
+            color: var(--text-light);
+            font-size: 12px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 18px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .method-badge {
+            background: rgba(0, 97, 255, 0.1);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .btn-try {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card);
+            width: 100%;
+            max-width: 850px;
+            border-radius: 24px;
+            overflow: hidden;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-container {
+            height: 6px;
+            background: var(--bg);
+            width: 100%;
+            position: absolute;
+            top: 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: 0.2s;
+        }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .url-box-container {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .url-text {
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-right: 40px;
+        }
+
+        .copy-icon {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-light);
+            transition: 0.2s;
+        }
+
+        .copy-icon:hover { color: var(--primary); }
+
+        .response-box {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .response-box pre, .response-box textarea {
+            color: #d4d4d4;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            width: 100%;
+            background: transparent;
+            border: none;
+            resize: none;
+            overflow: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .client-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .client-card {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .client-card label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .client-card span {
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        footer {
+            margin-top: 60px;
+            background: var(--card);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-socials {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .footer-socials a {
+            font-size: 24px;
+            color: var(--text-light);
+            transition: 0.3s;
+        }
+
+        .footer-socials a:hover { color: var(--primary); transform: translateY(-3px); }
+
+        .mobile-btn {
+            display: none;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar { left: -100%; }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.open { display: block; }
+            header { left: 0; padding: 20px; }
+            header.scrolled { left: 0; right: 0; border-radius: 0; margin: 0; }
+            .main { margin-left: 0; padding: 100px 20px 40px; }
+            .mobile-btn { display: block; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="bi bi-cpu-fill"></i> REREZZ API
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="#" class="nav-link active"><i class="bi bi-grid-fill"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="https://whatsapp.com/channel/0029Vat4lwpKLaHoS0MAwj3Z" class="nav-link"><i class="bi bi-megaphone-fill"></i> Channel</a></li>
+            <li class="nav-item"><a href="/donate" class="nav-link"><i class="bi bi-heart-fill"></i> Donasi</a></li>
+            <li class="nav-item"><a href="https://github.com/RerezzOfficial" class="nav-link"><i class="bi bi-code-slash"></i> Source Code</a></li>
+        </ul>
+        <div class="divider"></div>
+        <p style="font-size: 11px; font-weight: 800; color: var(--text-light); margin-left: 18px; margin-bottom: 15px;">CATEGORIES</p>
+        <ul class="nav-menu" id="side-categories">
+            <div class="skeleton" style="height: 45px; margin-bottom: 10px;"></div>
+            <div class="skeleton" style="height: 45px; margin-bottom: 10px;"></div>
+            <div class="skeleton" style="height: 45px; margin-bottom: 10px;"></div>
+        </ul>
+    </aside>
+
+    <header id="header">
+        <div class="mobile-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></div>
+        <div style="font-weight: 800; font-size: 18px;">REST <span style="color: var(--primary)">APIS</span></div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <i class="bi bi-moon-stars-fill" id="theme-icon" style="cursor: pointer; font-size: 20px;" onclick="toggleTheme()"></i>
+            <img src="https://img.icons8.com/color/48/indonesia-circular.png" width="30" height="30">
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="profile-section">
+            <div id="prof-loader" style="width: 100%;">
+                <div class="skeleton profile-img" style="margin: 0 auto 15px;"></div>
+                <div class="skeleton" style="height: 30px; width: 250px; margin: 0 auto 10px;"></div>
+                <div class="skeleton" style="height: 18px; width: 350px; margin: 0 auto;"></div>
+                <div class="stats-grid">
+                    <div class="skeleton" style="height: 100px;"></div>
+                    <div class="skeleton" style="height: 100px;"></div>
+                </div>
+            </div>
+            
+            <div id="prof-content" style="display: none; width: 100%;">
+                <img src="https://cdn.nekohime.site/file/LltpgnjV.jpeg" class="profile-img" onerror="this.src='https://ui-avatars.com/api/?name=Rerezz+Official &background=0061ff&color=fff'">
+                <h1 id="owner-name" style="font-weight: 800; font-size: 32px;">...</h1>
+                <p style="color: var(--text-light); max-width: 600px; margin: 10px auto 0;">Sistem layanan Rest API gratis untuk mempermudah projek anda.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <label style="color: var(--text-light); font-size: 11px; font-weight: 800;">API VERSION</label>
+                        <h2 id="ver-text" style="color: var(--primary); margin-top: 5px;">0.0.0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <label style="color: var(--text-light); font-size: 11px; font-weight: 800;">TOTAL ENDPOINTS</label>
+                        <h2 id="total-text" style="color: var(--primary); margin-top: 5px;">0</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="api-list">
+            <div class="card-api"><div class="skeleton" style="height: 300px;"></div></div>
+            <div class="card-api"><div class="skeleton" style="height: 300px;"></div></div>
+        </div>
+
+        <footer>
+            <div class="footer-socials">
+                <a href="https://youtube.com/@rerezz-official"><i class="bi bi-youtube"></i></a>
+                <a href="https://whatsapp.com/channel/0029Vat4lwpKLaHoS0MAwj3Z"><i class="bi bi-whatsapp"></i></a>
+                <a href="https://t.me/rerezz_official"><i class="bi bi-telegram"></i></a>
+                <a href="https://github.com/RerezzOfficial"><i class="bi bi-github"></i></a>
+            </div>
+            <p style="font-weight: 800; margin-bottom: 8px;">&copy; 2026 Rerezz Ajaa - Fullstack Developer</p>
+            <p style="color: var(--text-light); font-size: 13px;">Sourcode Website Rest API ini gratis 100% Dari developer. harap tidak di perjual belikan</p>
+        </footer>
+    </main>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+            <div class="modal-header">
+                <div>
+                    <h3 id="m-title" style="font-weight: 800;">Endpoint Name</h3>
+                    <p style="font-size: 12px; color: var(--text-light);">Real-time API response</p>
+                </div>
+                <i class="bi bi-x-lg" style="cursor: pointer; font-size: 20px;" onclick="closeModal()"></i>
+            </div>
+            <div class="modal-body">
+                <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-light); margin-bottom: 8px;">REQUESTED URL</label>
+                <div class="url-box-container">
+                    <div class="url-text" id="m-url">/api/example</div>
+                    <i class="bi bi-clipboard copy-icon" onclick="copyValue('m-url')"></i>
+                </div>
+
+                <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-light); margin-bottom: 8px;">RESPONSE BODY</label>
+                <div class="response-box">
+                    <i class="bi bi-clipboard copy-icon" style="top: 15px; right: 15px; z-index: 5;" onclick="copyValue('m-res')"></i>
+                    <div id="media-wrap" style="margin-bottom: 15px; display: none; text-align: center;"></div>
+                    <pre id="m-res">Fetching...</pre>
+                </div>
+
+                <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-light); margin-bottom: 10px;">CLIENT DETAILS</label>
+                <div class="client-info-grid" id="m-client">
+                    <div class="skeleton" style="height: 60px;"></div>
+                    <div class="skeleton" style="height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const body = document.body;
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function toggleTheme() {
+            const current = body.getAttribute('data-theme');
+            const target = current === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', target);
+            document.getElementById('theme-icon').className = target === 'light' ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
+        }
+
+        window.onscroll = () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 30) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        };
+
+        async function init() {
+            try {
+                const response = await fetch('/api/list');
+                const result = await response.json();
+                renderUI(result);
+            } catch (err) {
+                document.getElementById('api-list').innerHTML = `
+                    <div style="text-align:center; padding: 50px;">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 48px; color: var(--primary);"></i>
+                        <h3 style="margin-top: 15px;">Gagal Memuat Data</h3>
+                        <p style="color: var(--text-light);">Pastikan server backend /api/listapi sudah aktif.</p>
+                    </div>`;
+            }
+        }
+
+        function renderUI(res) {
+            document.getElementById('prof-loader').style.display = 'none';
+            document.getElementById('prof-content').style.display = 'block';
+            document.getElementById('owner-name').innerText = res.owner;
+            document.getElementById('ver-text').innerText = res.version;
+            document.getElementById('total-text').innerText = res.total_Api;
+
+            const listEl = document.getElementById('api-list');
+            const sideEl = document.getElementById('side-categories');
+            listEl.innerHTML = '';
+            sideEl.innerHTML = '';
+
+            for (const cat in res.data) {
+                sideEl.innerHTML += `
+                    <li class="nav-item">
+                        <a href="#cat-${cat}" class="nav-link" onclick="if(window.innerWidth < 992) toggleSidebar()">
+                            <i class="bi bi-folder-fill"></i> ${cat.toUpperCase()}
+                        </a>
+                    </li>`;
+
+                let tableRows = '';
+                res.data[cat].forEach(api => {
+                    tableRows += `
+                        <tr>
+                            <td style="font-weight: 700;">${api.name}</td>
+                            <td><span class="method-badge">${api.method}</span></td>
+                            <td><code style="color: var(--text-light)">${api.route}</code></td>
+                            <td><code style="color: var(--primary)">${api.query}</code></td>
+                            <td><button class="btn-try" onclick="tryApi('${api.example}', '${api.name}')">Execute</button></td>
+                        </tr>`;
+                });
+
+                listEl.innerHTML += `
+                    <div class="card-api" id="cat-${cat}">
+                        <h2 style="font-weight: 800; text-transform: capitalize;"><i class="bi bi-box-seam" style="color: var(--primary)"></i> ${cat} Endpoints</h2>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>API Name</th>
+                                        <th>Method</th>
+                                        <th>Route</th>
+                                        <th>Query</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${tableRows}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        async function tryApi(path, name) {
+            const modal = document.getElementById('modal');
+            const pBar = document.getElementById('p-bar');
+            const resEl = document.getElementById('m-res');
+            const mediaWrap = document.getElementById('media-wrap');
+            const fullUrl = window.location.origin + path;
+
+            modal.style.display = 'flex';
+            document.getElementById('m-title').innerText = name;
+            document.getElementById('m-url').innerText = fullUrl;
+            resEl.innerText = 'Initializing request...';
+            mediaWrap.style.display = 'none';
+            mediaWrap.innerHTML = '';
+
+            let progress = 0;
+            const timer = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 98) clearInterval(timer);
+                pBar.style.width = progress + '%';
+            }, 100);
+
+            try {
+                const response = await fetch(path);
+                const type = response.headers.get('content-type');
+                
+                clearInterval(timer);
+                pBar.style.width = '100%';
+
+                if (type.includes('application/json')) {
+                    const data = await response.json();
+                    resEl.innerText = JSON.stringify(data, null, 2);
+                } else if (type.includes('image')) {
+                    resEl.innerText = '[Binary Image Content]';
+                    mediaWrap.style.display = 'block';
+                    mediaWrap.innerHTML = `<img src="${path}" style="max-width: 100%; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">`;
+                } else if (type.includes('video')) {
+                    resEl.innerText = '[Binary Video Content]';
+                    mediaWrap.style.display = 'block';
+                    mediaWrap.innerHTML = `<video controls src="${path}" style="max-width: 100%; border-radius: 12px;"></video>`;
+                } else if (type.includes('audio')) {
+                    resEl.innerText = '[Binary Audio Content]';
+                    mediaWrap.style.display = 'block';
+                    mediaWrap.innerHTML = `<audio controls src="${path}" style="width: 100%;"></audio>`;
+                } else {
+                    resEl.innerText = await response.text();
+                }
+                fetchClient();
+            } catch (err) {
+                clearInterval(timer);
+                pBar.style.width = '100%';
+                pBar.style.backgroundColor = '#ff4d4d';
+                resEl.innerText = 'Fetch Error: ' + err.message;
+            }
+        }
+
+        async function fetchClient() {
+            const wrap = document.getElementById('m-client');
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const d = await res.json();
+                wrap.innerHTML = `
+                    <div class="client-card">
+                        <label>IP Address</label>
+                        <span>${d.ip}</span>
+                    </div>
+                    <div class="client-card">
+                        <label>Location</label>
+                        <span><img src="https://flagcdn.com/w20/${d.country_code.toLowerCase()}.png" width="20"> ${d.city}, ${d.country_name}</span>
+                    </div>
+                    <div class="client-card" style="grid-column: span 2;">
+                        <label>User Agent</label>
+                        <span style="font-size: 11px; white-space: normal;">${navigator.userAgent}</span>
+                    </div>`;
+            } catch {
+                wrap.innerHTML = '<p>Gagal mendapatkan info klien.</p>';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('p-bar').style.width = '0%';
+        }
+
+        function copyValue(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert('Teks berhasil disalin!');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
